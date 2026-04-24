@@ -1,1 +1,253 @@
-<!-- MedBrief App Prototype -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MedBrief App — Doctor Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --primary:#2563EB;--primary-light:#EFF6FF;--accent:#10B981;--accent-light:#ECFDF5;
+    --warn:#F59E0B;--warn-light:#FFFBEB;--danger:#EF4444;--dark:#0F172A;
+    --bg:#F1F5F9;--card:#FFFFFF;--text:#1E293B;--muted:#64748B;--border:#E2E8F0;
+  }
+  html{scroll-behavior:smooth;}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+  .topbar{background:var(--primary);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(37,99,235,0.3);}
+  .topbar-logo{font-size:18px;font-weight:800;letter-spacing:-0.5px;}
+  .topbar-logo span{opacity:0.7;font-weight:400;}
+  .topbar-right{display:flex;align-items:center;gap:10px;}
+  .notif-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .avatar{width:36px;height:36px;border-radius:50%;background:#fff;color:var(--primary);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+  .tabs{display:flex;overflow-x:auto;background:#fff;border-bottom:1px solid var(--border);padding:0 12px;-webkit-overflow-scrolling:touch;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{flex-shrink:0;padding:14px 16px;font-size:13px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+  .tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+
+  .screen{display:none;padding:16px;max-width:640px;margin:0 auto;}
+  .screen.active{display:block;}
+
+  .card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,0.06);margin-bottom:14px;border:1px solid var(--border);}
+  .card-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;}
+
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+  .stat-card{background:var(--card);border-radius:14px;padding:16px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+  .stat-card.blue{background:var(--primary-light);border-color:#BFDBFE;}
+  .stat-card.green{background:var(--accent-light);border-color:#A7F3D0;}
+  .stat-card.warn{background:var(--warn-light);border-color:#FDE68A;}
+  .stat-num{font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:2px;}
+  .stat-card.blue .stat-num{color:var(--primary);}
+  .stat-card.green .stat-num{color:#059669;}
+  .stat-card.warn .stat-num{color:#D97706;}
+  .stat-label{font-size:12px;color:var(--muted);font-weight:500;}
+
+  .patient-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+  .patient-item:last-child{border-bottom:none;}
+  .patient-avatar{width:42px;height:42px;border-radius:50%;background:var(--primary-light);color:var(--primary);font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .patient-info{flex:1;min-width:0;}
+  .patient-name{font-size:14px;font-weight:600;margin-bottom:2px;}
+  .patient-meta{font-size:12px;color:var(--muted);}
+  .patient-tag{font-size:11px;padding:3px 8px;border-radius:100px;font-weight:600;flex-shrink:0;}
+  .tag-due{background:var(--warn-light);color:#D97706;}
+  .tag-ok{background:var(--accent-light);color:#059669;}
+  .tag-new{background:var(--primary-light);color:var(--primary);}
+  .tag-overdue{background:#FEE2E2;color:var(--danger);}
+
+  .form-group{margin-bottom:16px;}
+  .form-group label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px;}
+  .form-group input,.form-group select,.form-group textarea{width:100%;background:#F8FAFC;border:1.5px solid var(--border);border-radius:10px;padding:12px 13px;font-size:15px;color:var(--text);font-family:'Inter',sans-serif;outline:none;transition:border 0.2s;}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary);background:#fff;}
+  .upload-zone{border:2px dashed var(--border);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:all 0.2s;background:#F8FAFC;}
+  .upload-zone .upload-icon{font-size:32px;margin-bottom:8px;}
+  .upload-zone p{font-size:14px;color:var(--muted);}
+  .upload-zone p strong{color:var(--primary);}
+
+  .btn{width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:all 0.2s;}
+  .btn-primary{background:var(--primary);color:#fff;}
+  .btn-primary:active{background:#1D4ED8;}
+  .btn-secondary{background:var(--bg);color:var(--text);border:1.5px solid var(--border);}
+  .btn-accent{background:var(--accent);color:#fff;}
+  .btn-sm{width:auto;padding:8px 16px;font-size:13px;border-radius:8px;}
+
+  .reminder-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+  .chip{padding:8px 14px;border-radius:100px;font-size:13px;font-weight:600;border:1.5px solid var(--border);background:#fff;cursor:pointer;transition:all 0.2s;color:var(--muted);}
+  .chip.selected{background:var(--primary);color:#fff;border-color:var(--primary);}
+
+  .preview-bubble{background:#E2FFC7;border-radius:14px 14px 14px 4px;padding:14px 16px;margin:12px 0;}
+  .preview-bubble::before{content:"📱 Preview — WhatsApp Message";font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;}
+  .preview-bubble .clinic-name{font-size:13px;font-weight:700;color:#075E54;margin-bottom:6px;}
+  .preview-bubble .msg-text{font-size:14px;color:#111;line-height:1.5;}
+  .preview-bubble .msg-time{font-size:11px;color:#999;text-align:right;margin-top:6px;}
+
+  .timeline{display:flex;flex-direction:column;}
+  .timeline-item{display:flex;gap:14px;padding-bottom:20px;position:relative;}
+  .timeline-dot{width:12px;height:12px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:4px;position:relative;z-index:1;}
+  .timeline-line{position:absolute;left:5px;top:16px;bottom:0;width:2px;background:var(--border);}
+  .timeline-item:last-child .timeline-line{display:none;}
+  .timeline-content{flex:1;}
+  .timeline-date{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:2px;}
+  .timeline-title{font-size:14px;font-weight:600;margin-bottom:3px;}
+  .timeline-sub{font-size:12px;color:var(--muted);}
+
+  .segment-card{border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;}
+  .segment-card.selected{border-color:var(--primary);background:var(--primary-light);}
+  .segment-card h4{font-size:14px;font-weight:700;margin-bottom:2px;}
+  .segment-card p{font-size:12px;color:var(--muted);}
+  .segment-count{float:right;background:var(--primary);color:#fff;font-size:12px;font-weight:700;padding:2px 8px;border-radius:100px;}
+
+  .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#1E293B;color:#fff;padding:12px 20px;border-radius:100px;font-size:14px;font-weight:500;opacity:0;transition:all 0.3s;z-index:999;white-space:nowrap;pointer-events:none;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  .greeting{background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;border-radius:16px;padding:20px;margin-bottom:14px;}
+  .greeting h2{font-size:18px;font-weight:800;margin-bottom:4px;}
+  .greeting p{font-size:13px;opacity:0.85;}
+  .greeting-actions{display:flex;gap:10px;margin-top:14px;}
+  .greeting-btn{background:rgba(255,255,255,0.2);color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;flex:1;}
+  .greeting-btn.white{background:#fff;color:var(--primary);}
+  .pb-safe{height:20px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">Med<span>Brief</span></div>
+  <div class="topbar-right">
+    <button class="notif-btn" onclick="showToast('3 patients due for follow-up today')">🔔</button>
+    <div class="avatar">DS</div>
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" onclick="switchTab('dashboard')">Dashboard</div>
+  <div class="tab" onclick="switchTab('send')">Send Report</div>
+  <div class="tab" onclick="switchTab('patients')">Patients</div>
+  <div class="tab" onclick="switchTab('broadcast')">Broadcast</div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="screen active" id="screen-dashboard">
+  <div class="greeting">
+    <h2>Good afternoon, Dr. Sharma 👋</h2>
+    <p>You have 3 patients due for follow-up today.</p>
+    <div class="greeting-actions">
+      <button class="greeting-btn white" onclick="switchTab('send')">+ Send Report</button>
+      <button class="greeting-btn" onclick="switchTab('broadcast')">📣 Broadcast</button>
+    </div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card blue"><div class="stat-num">24</div><div class="stat-label">Reports sent this month</div></div>
+    <div class="stat-card green"><div class="stat-num">11</div><div class="stat-label">Patients recalled</div></div>
+    <div class="stat-card warn"><div class="stat-num">3</div><div class="stat-label">Follow-ups due today</div></div>
+    <div class="stat-card" style="background:#F5F3FF;border-color:#DDD6FE;"><div class="stat-num" style="color:#7C3AED;">₹5,500</div><div class="stat-label" style="color:#7C3AED;">Revenue recovered</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Due for Follow-Up Today</div>
+    <div class="patient-item"><div class="patient-avatar">RP</div><div class="patient-info"><div class="patient-name">Rajan Patel</div><div class="patient-meta">Diabetes follow-up · 3 months overdue</div></div><span class="patient-tag tag-overdue">Overdue</span></div>
+    <div class="patient-item"><div class="patient-avatar">SM</div><div class="patient-info"><div class="patient-name">Sunita Mehta</div><div class="patient-meta">BP check · Due today</div></div><span class="patient-tag tag-due">Due</span></div>
+    <div class="patient-item"><div class="patient-avatar">AK</div><div class="patient-info"><div class="patient-name">Arvind Kumar</div><div class="patient-meta">Post-surgery review · Due today</div></div><span class="patient-tag tag-due">Due</span></div>
+    <button class="btn btn-secondary btn-sm" style="margin-top:14px;width:100%;" onclick="switchTab('broadcast');showToast('Send reminders now')">Send Reminders to All →</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Recent Reports Sent</div>
+    <div class="patient-item"><div class="patient-avatar">NJ</div><div class="patient-info"><div class="patient-name">Neha Joshi</div><div class="patient-meta">Blood panel · Sent 2 hrs ago · ✅ Delivered</div></div></div>
+    <div class="patient-item"><div class="patient-avatar">VG</div><div class="patient-info"><div class="patient-name">Vijay Gupta</div><div class="patient-meta">X-ray report · Sent yesterday · ✅ Delivered</div></div></div>
+    <div class="patient-item"><div class="patient-avatar">PS</div><div class="patient-info"><div class="patient-name">Priya Singh</div><div class="patient-meta">Thyroid panel · Sent 2 days ago · ✅ Read</div></div></div>
+  </div>
+</div>
+
+<!-- SEND REPORT -->
+<div class="screen" id="screen-send">
+  <div class="card">
+    <div class="card-title">Send a Report</div>
+    <div class="form-group"><label>Patient Name</label><input type="text" id="patient-name-input" placeholder="e.g. Rajan Patel" oninput="updatePreview()"/></div>
+    <div class="form-group"><label>Patient WhatsApp Number</label><input type="tel" placeholder="+91 98765 43210"/></div>
+    <div class="form-group"><label>Report Type</label><select id="report-type" onchange="updatePreview()"><option value="" disabled selected>Select report type</option><option>Blood Test Report</option><option>X-Ray / Imaging</option><option>Prescription</option><option>Discharge Summary</option><option>Ultrasound Report</option><option>ECG Report</option><option>Other</option></select></div>
+    <div class="form-group"><label>Upload Report</label><div class="upload-zone" onclick="showToast('📎 File selected: report.pdf')"><div class="upload-icon">📄</div><p><strong>Tap to upload</strong> PDF or photo</p><p style="font-size:12px;margin-top:4px;">Supports JPG, PNG, PDF</p></div></div>
+    <div class="form-group"><label>Set Follow-Up Reminder</label><div class="reminder-chips"><span class="chip" onclick="selectChip(this)">1 Week</span><span class="chip" onclick="selectChip(this)">2 Weeks</span><span class="chip selected" onclick="selectChip(this)">1 Month</span><span class="chip" onclick="selectChip(this)">3 Months</span><span class="chip" onclick="selectChip(this)">6 Months</span><span class="chip" onclick="selectChip(this)">No Reminder</span></div></div>
+    <div class="form-group"><label>Add a Note (optional)</label><textarea rows="2" placeholder="e.g. Please avoid sugar. See me in 1 month." id="note-input" oninput="updatePreview()"></textarea></div>
+  </div>
+  <div class="card">
+    <div class="card-title">WhatsApp Preview</div>
+    <div class="preview-bubble"><div class="clinic-name">🏥 Sharma Clinic, Mumbai</div><div class="msg-text" id="preview-text">Dear Patient, your <strong>Blood Test Report</strong> is ready. Please find it attached.<br><br>Your next follow-up is in <strong>1 Month</strong>. We will remind you closer to the date.</div><div class="msg-time">Now · ✓✓</div></div>
+  </div>
+  <button class="btn btn-primary" onclick="sendReport()" style="margin-bottom:14px;">📤 Send via WhatsApp</button>
+</div>
+
+<!-- PATIENTS -->
+<div class="screen" id="screen-patients">
+  <div class="card" style="padding:12px 14px;"><input type="text" placeholder="🔍  Search patients..." style="width:100%;border:none;background:transparent;font-size:15px;outline:none;font-family:'Inter',sans-serif;"/></div>
+  <div class="card" id="patient-list-card">
+    <div class="card-title">All Patients (6)</div>
+    <div class="patient-item" onclick="openPatient('Rajan Patel','Diabetes · Hypertension')"><div class="patient-avatar">RP</div><div class="patient-info"><div class="patient-name">Rajan Patel · 54M</div><div class="patient-meta">Diabetes · Last visit: Jan 15</div></div><span class="patient-tag tag-overdue">Overdue</span></div>
+    <div class="patient-item" onclick="openPatient('Sunita Mehta','Hypertension · Thyroid')"><div class="patient-avatar">SM</div><div class="patient-info"><div class="patient-name">Sunita Mehta · 48F</div><div class="patient-meta">Hypertension · Last visit: Mar 10</div></div><span class="patient-tag tag-due">Due Today</span></div>
+    <div class="patient-item" onclick="openPatient('Neha Joshi','Thyroid')"><div class="patient-avatar">NJ</div><div class="patient-info"><div class="patient-name">Neha Joshi · 31F</div><div class="patient-meta">Thyroid · Last visit: Apr 22</div></div><span class="patient-tag tag-ok">Current</span></div>
+    <div class="patient-item" onclick="openPatient('Arvind Kumar','Post-surgery')"><div class="patient-avatar">AK</div><div class="patient-info"><div class="patient-name">Arvind Kumar · 62M</div><div class="patient-meta">Post-surgery · Last visit: Apr 10</div></div><span class="patient-tag tag-due">Due Today</span></div>
+    <div class="patient-item" onclick="openPatient('Vijay Gupta','General')"><div class="patient-avatar">VG</div><div class="patient-info"><div class="patient-name">Vijay Gupta · 45M</div><div class="patient-meta">General · Last visit: Apr 21</div></div><span class="patient-tag tag-ok">Current</span></div>
+    <div class="patient-item" onclick="openPatient('Priya Singh','Diabetes')"><div class="patient-avatar">PS</div><div class="patient-info"><div class="patient-name">Priya Singh · 39F</div><div class="patient-meta">Diabetes · Last visit: Apr 20</div></div><span class="patient-tag tag-new">New</span></div>
+  </div>
+  <div id="patient-detail" style="display:none;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;"><button onclick="closePatient()" style="background:none;border:none;font-size:22px;cursor:pointer;">←</button><h3 id="detail-name" style="font-size:16px;font-weight:700;"></h3></div>
+    <div class="card">
+      <div class="card-title">Patient History</div>
+      <div class="timeline">
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-line"></div><div class="timeline-content"><div class="timeline-date">Apr 22, 2026</div><div class="timeline-title">Blood Test Report sent</div><div class="timeline-sub">Fasting glucose: 142 mg/dL · HbA1c: 7.8%</div></div></div>
+        <div class="timeline-item"><div class="timeline-dot" style="background:#10B981;"></div><div class="timeline-line"></div><div class="timeline-content"><div class="timeline-date">Jan 15, 2026</div><div class="timeline-title">Consultation — Diabetes review</div><div class="timeline-sub">Metformin 500mg twice daily · Follow-up in 3 months</div></div></div>
+        <div class="timeline-item"><div class="timeline-dot" style="background:#F59E0B;"></div><div class="timeline-line"></div><div class="timeline-content"><div class="timeline-date">Oct 10, 2025</div><div class="timeline-title">Prescription issued</div><div class="timeline-sub">BP medication adjusted · Lisinopril 10mg</div></div></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="switchTab('send');closePatient();showToast('Patient pre-filled')">+ Send New Report</button>
+  </div>
+</div>
+
+<!-- BROADCAST -->
+<div class="screen" id="screen-broadcast">
+  <div class="card">
+    <div class="card-title">Select Patient Group</div>
+    <div class="segment-card selected" onclick="selectSegment(this,4)"><span class="segment-count">4</span><h4>🩸 Diabetes Patients</h4><p>Last messaged: 3 weeks ago</p></div>
+    <div class="segment-card" onclick="selectSegment(this,3)"><span class="segment-count">3</span><h4>❤️ Hypertension Patients</h4><p>Last messaged: 1 month ago</p></div>
+    <div class="segment-card" onclick="selectSegment(this,6)"><span class="segment-count">6</span><h4>👥 All Patients</h4><p>General announcement</p></div>
+    <div class="segment-card" onclick="selectSegment(this,2)"><span class="segment-count">2</span><h4>⚠️ Overdue Follow-Ups</h4><p>Have not visited in 3+ months</p></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Message</div>
+    <div class="form-group"><textarea rows="4" id="broadcast-msg">Dear Patient, this is a reminder from Sharma Clinic. Your follow-up is due. Please book an appointment at your earliest convenience. Call us on 98765 43210.</textarea></div>
+    <div class="preview-bubble"><div class="clinic-name">🏥 Sharma Clinic, Mumbai</div><div class="msg-text">Dear Patient, this is a reminder from Sharma Clinic. Your follow-up is due. Please book an appointment at your earliest convenience. Call us on 98765 43210.</div><div class="msg-time">Now · ✓✓</div></div>
+  </div>
+  <button class="btn btn-accent" onclick="sendBroadcast()" style="margin-bottom:14px;">📣 Send to <span id="segment-count-btn">4</span> Patients</button>
+</div>
+
+<div class="pb-safe"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+  function switchTab(tab) {
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById('screen-'+tab).classList.add('active');
+    const tabs=['dashboard','send','patients','broadcast'];
+    document.querySelectorAll('.tab')[tabs.indexOf(tab)].classList.add('active');
+    if(tab==='patients'){document.getElementById('patient-detail').style.display='none';document.getElementById('patient-list-card').style.display='block';}
+    window.scrollTo(0,0);
+  }
+  function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+  function selectChip(el){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');updatePreview();}
+  function updatePreview(){
+    const name=document.getElementById('patient-name-input').value||'Patient';
+    const type=document.getElementById('report-type').value||'Report';
+    const chip=document.querySelector('.chip.selected');
+    const reminder=chip?chip.textContent.trim():'1 Month';
+    const note=document.getElementById('note-input').value;
+    const noteHtml=note?'<br><br><em>'+note+'</em>':'';
+    document.getElementById('preview-text').innerHTML='Dear '+name+', your <strong>'+type+'</strong> is ready. Please find it attached.<br><br>'+(reminder!=='No Reminder'?'Your next follow-up is in <strong>'+reminder+'</strong>. We will remind you.':'If you have any questions, please contact us.')+noteHtml;
+  }
+  function sendReport(){const name=document.getElementById('patient-name-input').value;if(!name){showToast('Please enter a patient name');return;}showToast('✅ Report sent to '+name+'!');setTimeout(()=>switchTab('dashboard'),1000);}
+  function openPatient(name,conditions){document.getElementById('patient-list-card').style.display='none';document.getElementById('detail-name').textContent=name+' — '+conditions;document.getElementById('patient-detail').style.display='block';}
+  function closePatient(){document.getElementById('patient-detail').style.display='none';document.getElementById('patient-list-card').style.display='block';}
+  function selectSegment(el,count){document.querySelectorAll('.segment-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');document.getElementById('segment-count-btn').textContent=count;}
+  function sendBroadcast(){showToast('📣 Message sent to '+document.getElementById('segment-count-btn').textContent+' patients!');}
+</script>
+</body>
+</html>
