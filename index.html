@@ -79,23 +79,6 @@
 
   .form-section{padding:80px 24px;text-align:center;}
   .form-inner{max-width:540px;margin:0 auto;}
-  .form-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:32px 24px;margin-top:32px;}
-  .form-group{margin-bottom:16px;text-align:left;}
-  .form-group label{display:block;font-size:13px;font-weight:600;color:#CBD5E1;margin-bottom:6px;}
-  .form-group input,.form-group select,.form-group textarea{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:13px 14px;font-size:15px;color:var(--white);font-family:'Inter',sans-serif;outline:none;transition:border 0.2s;}
-  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary);}
-  .form-group select option{background:#1E293B;color:#fff;}
-  .radio-group{display:flex;flex-direction:column;gap:10px;}
-  .radio-option{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;cursor:pointer;}
-  .radio-option input{accent-color:var(--primary);width:16px;height:16px;}
-  .radio-option span{font-size:14px;}
-  .submit-btn{width:100%;background:var(--primary);color:#fff;border:none;padding:16px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;transition:all 0.2s;}
-  .submit-btn:hover{background:var(--primary-dark);}
-  .form-note{font-size:12px;color:var(--text);margin-top:12px;}
-  #form-success{display:none;text-align:center;padding:20px;}
-  #form-success .check{font-size:48px;margin-bottom:12px;}
-  #form-success h3{font-size:20px;font-weight:700;margin-bottom:8px;}
-  #form-success p{font-size:14px;color:var(--text);}
 
   footer{padding:32px 24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
   footer p{font-size:13px;color:var(--text);}
@@ -115,7 +98,7 @@
 
 <nav>
   <div class="logo">Med<span>Brief</span></div>
-  <a href="#join" class="nav-cta">Join Waitlist</a>
+  <a href="https://tally.so/r/ob0AjO" target="_blank" class="nav-cta">Join Waitlist</a>
 </nav>
 
 <section class="hero">
@@ -124,7 +107,7 @@
   <h1>Stop Losing Patients.<br><span class="blue">Keep Them Coming</span> <span class="green">Back.</span></h1>
   <p class="hero-sub">MedBrief helps solo and small clinic doctors send reports professionally and automatically bring patients back for follow-ups — without lifting a finger.</p>
   <div class="hero-actions">
-    <a href="#join" class="btn-primary">Get Early Access — Free</a>
+    <a href="https://tally.so/r/ob0AjO" target="_blank" class="btn-primary">Get Early Access — Free</a>
     <a href="#how" class="btn-secondary">See How It Works</a>
   </div>
   <p class="hero-trust">No credit card. No setup fees. 30-day free trial.</p>
@@ -193,7 +176,7 @@
       <li>Unlimited patients</li>
       <li>30-day free trial</li>
     </ul>
-    <a href="#join" class="btn-primary">Start Free Trial</a>
+    <a href="https://tally.so/r/ob0AjO" target="_blank" class="btn-primary">Start Free Trial</a>
   </div>
 </div>
 
@@ -201,25 +184,10 @@
   <div class="form-inner">
     <p class="section-label" style="text-align:center;">Early Access</p>
     <h2 class="section-title">Be the first to try MedBrief.</h2>
-    <p style="font-size:15px;color:var(--text);margin-top:8px;">Answer 5 quick questions and get free early access when we launch.</p>
-    <div class="form-box">
-      <form id="validation-form">
-        <div id="form-success">
-          <div class="check">&#127881;</div>
-          <h3>You are on the list!</h3>
-          <p>We will WhatsApp you personally before we launch. Thank you, Doctor.</p>
-        </div>
-        <div id="form-fields">
-          <div class="form-group"><label>Your name and clinic name</label><input type="text" placeholder="Dr. Sharma — Sharma Clinic, Mumbai" required/></div>
-          <div class="form-group"><label>How many patients do you see per day?</label><select required><option value="" disabled selected>Select range</option><option>Less than 10</option><option>10–20</option><option>20–40</option><option>40+</option></select></div>
-          <div class="form-group"><label>How do you currently send reports?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="reports" value="personal-whatsapp"/><span>Personal WhatsApp</span></label><label class="radio-option"><input type="radio" name="reports" value="physical-copy"/><span>Physical copy only</span></label><label class="radio-option"><input type="radio" name="reports" value="dont-send"/><span>Patients collect in person</span></label><label class="radio-option"><input type="radio" name="reports" value="other"/><span>Other system</span></label></div></div>
-          <div class="form-group"><label>Do patients often miss follow-up appointments?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="followup" value="yes-major"/><span>Yes — it is a major issue</span></label><label class="radio-option"><input type="radio" name="followup" value="yes-minor"/><span>Yes — sometimes</span></label><label class="radio-option"><input type="radio" name="followup" value="no"/><span>Not really</span></label></div></div>
-          <div class="form-group"><label>Would you pay &#8377;999/month if this brought back 5+ missed patients?</label><div class="radio-group"><label class="radio-option"><input type="radio" name="pay" value="yes"/><span>Yes, definitely</span></label><label class="radio-option"><input type="radio" name="pay" value="maybe"/><span>Maybe — want to see it first</span></label><label class="radio-option"><input type="radio" name="pay" value="no"/><span>No</span></label></div></div>
-          <div class="form-group"><label>Your WhatsApp number (for demo invite)</label><input type="tel" placeholder="+91 98765 43210"/></div>
-          <button type="submit" class="submit-btn">Get Early Access</button>
-          <p class="form-note">&#128274; We will never spam you or share your number. Ever.</p>
-        </div>
-      </form>
+    <p style="font-size:15px;color:var(--text);margin-top:8px;">Answer 5 quick questions. Get free early access when we launch.</p>
+    <div style="margin-top:28px;">
+      <a href="https://tally.so/r/ob0AjO" target="_blank" class="btn-primary" style="max-width:400px;margin:0 auto;display:block;padding:18px 32px;font-size:17px;">&#128203; Fill the 2-Minute Form</a>
+      <p style="font-size:12px;color:var(--text);margin-top:12px;">&#128274; We will never spam you or share your number. Ever.</p>
     </div>
   </div>
 </section>
@@ -233,11 +201,6 @@
     entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
   },{threshold:0.1});
   document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
-  document.getElementById('validation-form').addEventListener('submit',function(e){
-    e.preventDefault();
-    document.getElementById('form-fields').style.display='none';
-    document.getElementById('form-success').style.display='block';
-  });
 </script>
 </body>
 </html>
